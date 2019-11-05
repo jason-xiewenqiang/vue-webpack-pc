@@ -1,6 +1,7 @@
 # dist
 /dist/
 /cache/
+.vscode
 
 # node-modules
 /node_modules/
