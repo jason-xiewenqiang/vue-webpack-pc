@@ -1,0 +1,10 @@
+{
+    "presets": [
+        "@babel/preset-env"
+    ],
+    "plugins": [
+        "@babel/proposal-class-properties",
+        "@babel/plugin-proposal-async-generator-functions",
+        "@babel/plugin-transform-runtime"
+    ]
+}
