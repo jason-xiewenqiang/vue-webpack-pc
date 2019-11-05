@@ -1,5 +1,6 @@
 # dist
 /dist/
+/cache/
 
 # node-modules
 /node-modules/
