@@ -10,17 +10,18 @@
 <script>
   export default {
     name: 'App',
-    mounted() {
-        console.log(1111)
-    }
+    mounted() {}
   }
 </script>
 
-<style>
+<style lang='less' scoped>
   html, body {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
     font-size: 16px;
+    h1 {
+      color: blue;
+    }
   }
 </style>

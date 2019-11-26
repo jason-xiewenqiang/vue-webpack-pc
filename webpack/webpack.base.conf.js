@@ -20,7 +20,8 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, '../dist'),
-        filename: 'js/[name].[hash:4].js'
+        filename: 'js/[name].[hash:4].js',
+        publicPath: './'
     },
     resolve: {
         alias: {
@@ -34,9 +35,6 @@ module.exports = {
                 test: /\.m?js$/,
                 exclude: /(node_modules|bower_components)/,
                 use: 'happypack/loader?id=babel'
-                // {
-                //     loader: 'babel-loader'
-                // }
             },
             {
                 test: /\.vue$/,
@@ -47,16 +45,16 @@ module.exports = {
                 use: [MiniCssExtractPlugin.loader, 'happypack/loader?id=css']
             },
             {
+                test: /\.less$/,
+                use: [MiniCssExtractPlugin.loader, 'happypack/loader?id=less']
+            },
+            {
                 test: /\.(png|svg|jpg|gif)$/,
-                use: [
-                    'file-loader'
-                ]
+                use: ['happypack/loader?id=file']
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: [
-                    'file-loader'
-                ]
+                use: ['happypack/loader?id=file']
             },
         ]
     },
@@ -93,7 +91,17 @@ module.exports = {
         }),
         new HappyPack({
             id: 'css',
+            loaders: ['css-loader', 'postcss-loader'],
+            threadPool: HappyThreadPool
+        }),
+        new HappyPack({
+            id: 'less',
             loaders: ['css-loader', 'less-loader', 'postcss-loader'],
+            threadPool: HappyThreadPool
+        }),
+        new HappyPack({
+            id: 'file',
+            loaders: ['file-loader'],
             threadPool: HappyThreadPool
         }),
         new webpack.optimize.SplitChunksPlugin(),
