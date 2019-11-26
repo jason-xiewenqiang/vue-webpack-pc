@@ -3,12 +3,15 @@
  * @description webpack base configuration
  */
 
+const os = require('os')
 const path = require('path')
 const webpack = require('webpack')
+const HappyPack = require('happypack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const AutoDllPlugin = require('autodll-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HappyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length - 1 })
 
 module.exports = {
     mode: 'none',
@@ -30,9 +33,10 @@ module.exports = {
         rules: [{
                 test: /\.m?js$/,
                 exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader'
-                }
+                use: 'happypack/loader?id=babel'
+                // {
+                //     loader: 'babel-loader'
+                // }
             },
             {
                 test: /\.vue$/,
@@ -40,7 +44,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader', 'postcss-loader']
+                use: [MiniCssExtractPlugin.loader, 'happypack/loader?id=css']
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
@@ -81,6 +85,16 @@ module.exports = {
             entry: {
                 vendor: ['vue']
             }
+        }),
+        new HappyPack({
+            id: 'babel',
+            loaders: ['babel-loader'],
+            threadPool: HappyThreadPool
+        }),
+        new HappyPack({
+            id: 'css',
+            loaders: ['css-loader', 'less-loader', 'postcss-loader'],
+            threadPool: HappyThreadPool
         }),
         new webpack.optimize.SplitChunksPlugin(),
         new MiniCssExtractPlugin({
