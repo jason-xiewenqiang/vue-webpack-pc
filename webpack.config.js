@@ -8,11 +8,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackBundleAnalyzer = require('webpack-bundle-analyzer');
 const SpeedMeasureWebpackPlugin = require('speed-measure-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
-const smp = new SpeedMeasureWebpackPlugin()
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const smp = new SpeedMeasureWebpackPlugin();
 
-const isProd = process.env.NODE_ENV == 'production'
-console.log(isProd, process.env.analyzer)
+const isProd = process.env.NODE_ENV === 'production';
+console.log(isProd, process.env.analyzer);
 
 const config = {
     entry: path.resolve(__dirname, './src/index.js'),
@@ -20,7 +20,6 @@ const config = {
         path: path.resolve(__dirname, './dist'),
         filename: 'js/[name].[hash:4].js',
         chunkFilename: 'js/[name].[chunkhash:6].js'
-        
     },
     devServer: {
         hot: true,
@@ -33,12 +32,13 @@ const config = {
         clientLogLevel: 'error',
         disableHostCheck: true,
         historyApiFallback: true,
-        proxy:{}
+        // overly: true,
+        proxy: {}
     },
     resolve: {
         alias: {
-            'vue$': 'vue/dist/vue.esm.js',
-            '@': path.resolve(__dirname, './src'),
+            vue$: 'vue/dist/vue.esm.js',
+            '@': path.resolve(__dirname, './src')
         },
         extensions: ['.js', '.json', '.vue', '.es6'],
         modules: [path.resolve(__dirname, 'node_modules')],
@@ -46,79 +46,86 @@ const config = {
     },
     module: {
         rules: [{
-                test: /\.m?js$/,
-                exclude: /(node_modules|bower_components)/,
-                use: [{
-                        loader: 'thread-loader',
-                        options: {
-                            workers: 4
-                        }
+            test: /\.m?js$/,
+            exclude: /(node_modules|bower_components)/,
+            include: path.resolve(__dirname, 'src'),
+            use: [{
+                loader: 'thread-loader',
+                options: {
+                    workers: 4
+                }
+            },
+            {
+                loader: 'babel-loader',
+                options: {
+                    cacheDirectory: true
+                }
+            }
+                // 'babel-loader?cacheDirectory=true'
+            ]
+        },
+        {
+            test: /\.vue$/,
+            loader: 'vue-loader'
+        },
+        {
+            test: /\.css$/,
+            use: [
+                isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+                'css-loader',
+                'postcss-loader'
+            ]
+        },
+        {
+            test: /\.less$/,
+            use: [
+                isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+                'css-loader',
+                'less-loader',
+                'postcss-loader'
+            ]
+        },
+        {
+            test: /\.(png|svg|jpg|gif)$/,
+            use: [{
+                loader: 'file-loader',
+                options: {
+                    outputPath: './images'
+                }
+            },
+            {
+                loader: 'image-webpack-loader',
+                options: {
+                    mozjpeg: {
+                        progressive: true,
+                        quality: 65
                     },
-                    'babel-loader?cacheDirectory=true'
-                ]
-            },
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
-                    'css-loader',
-                    'postcss-loader'
-                ]
-            },
-            {
-                test: /\.less$/,
-                use: [
-                    isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
-                    'css-loader',
-                    'less-loader',
-                    'postcss-loader'
-                ]
-            },
-            {
-                test: /\.(png|svg|jpg|gif)$/,
-                use: [{
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: './images'
-                        }
+                    optipng: {
+                        enabled: false
                     },
-                    {
-                        loader: 'image-webpack-loader',
-                        options: {
-                            mozjpeg: {
-                                progressive: true,
-                                quality: 65
-                            },
-                            optipng: {
-                                enabled: false,
-                            },
-                            pngquant: {
-                                quality: [0.65, 0.90],
-                                speed: 4
-                            },
-                            gifsicle: {
-                                interlaced: false,
-                            },
-                            webp: {
-                                quality: 75
-                            }
-                        }
+                    pngquant: {
+                        quality: [0.65, 0.90],
+                        speed: 4
                     },
-                ]
-            },
-            {
-                test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: [{
-                    loader: 'file-loader',
-                    options: {
-                        outputPath: './font'
+                    gifsicle: {
+                        interlaced: false
+                    },
+                    webp: {
+                        quality: 75
                     }
-                }]
-            },
+                }
+            }
+            ]
+        },
+        {
+            test: /\.(woff|woff2|eot|ttf|otf)$/,
+            use: [{
+                loader: 'file-loader',
+                options: {
+                    outputPath: './font'
+                }
+            }]
+        }
         ]
     },
     optimization: {
@@ -201,7 +208,7 @@ const config = {
         }),
         new OptimizeCSSAssetsPlugin({
             assetNameRegExp: /\.css$/g,
-            cssProcessor: require('cssnano'),
+            cssProcessor: require('cssnano')
         }),
         new VueLoaderPlugin(),
         new webpack.optimize.SplitChunksPlugin(),
@@ -210,23 +217,35 @@ const config = {
             chunkFilename: "css/[name].css"
         })
     ]
-}
+};
 
 if (!isProd) {
-    config.devtool = 'source-map'
-    config.watch = true
+    config.devtool = 'source-map';
+    config.watch = true;
     config.watchOptions = {
         ignored: /node_modules/,
         aggregateTimeout: 300,
         poll: 300
-    }
+    };
+    config.module.rules.unshift({
+        test: /.(vue|js|jsx)$/,
+        use: [{
+            loader: 'eslint-loader',
+            options: {
+                formatter: require('eslint-friendly-formatter')
+            }
+        }],
+        enforce: 'pre',
+        exclude: /node_modules/,
+        include: [path.resolve(__dirname, 'src')]
+    });
 } else {
-    config.plugins.push(new CleanWebpackPlugin(['dist']))
-    config.plugins.push(new HardSourceWebpackPlugin())
-    config.devtool = 'none'
-    config.watch = false
+    config.plugins.push(new CleanWebpackPlugin(['dist']));
+    config.plugins.push(new HardSourceWebpackPlugin());
+    config.devtool = 'none';
+    config.watch = false;
 }
 if (process.env.analyzer) {
-    config.plugins.push(new WebpackBundleAnalyzer.BundleAnalyzerPlugin())
+    config.plugins.push(new WebpackBundleAnalyzer.BundleAnalyzerPlugin());
 }
-module.exports = smp.wrap(config)
+module.exports = smp.wrap(config);
