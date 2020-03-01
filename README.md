@@ -2,7 +2,7 @@
 
 ## 配置详情请看 webpack config.js
 
-## Vue + Vuex + ElementUI + Axios
+## Vue + Vuex + vue-router + ElementUI + Axios
 
 ## 命令
 
