@@ -1,0 +1,8 @@
+# Ignore all files in node_modules directory
+# Ignore all files ending with js
+# except src directory
+
+node_modules/*
+**/*.js
+!src/**/*.js
+!src/**/*.vue
