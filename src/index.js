@@ -1,21 +1,24 @@
-import "normalize.css";
-import "lib-flexible/flexible.js";
-import Vue from "vue";
-import App from "./App";
-import Vuex from "vuex";
-
+import 'normalize.css';
+import Vue from 'vue';
+import Vuex from 'vuex';
 import {
-    Dialog,
-    Button,
-    ButtonGroup,
-    TimeSelect,
-    TimePicker,
-    Row,
-    Loading,
-    MessageBox,
-    Message,
-    Notification
-} from "element-ui";
+  Dialog,
+  Button,
+  ButtonGroup,
+  TimeSelect,
+  TimePicker,
+  Row,
+  Loading,
+  MessageBox,
+  Message,
+  Notification,
+  Container,
+  Aside,
+  Main
+} from 'element-ui';
+import App from './App.vue';
+import router from './router/index';
+
 
 Vue.use(Dialog);
 Vue.use(Button);
@@ -23,6 +26,9 @@ Vue.use(ButtonGroup);
 Vue.use(TimeSelect);
 Vue.use(TimePicker);
 Vue.use(Row);
+Vue.use(Container);
+Vue.use(Aside);
+Vue.use(Main);
 
 Vue.use(Loading.directive);
 Vue.use(Vuex);
@@ -36,14 +42,15 @@ Vue.prototype.$notify = Notification;
 Vue.prototype.$message = Message;
 
 const config = {
-    state: {},
-    mutations: {},
-    actions: {}
+  state: {},
+  mutations: {},
+  actions: {}
 };
 const store = new Vuex.Store(config);
 
 new Vue({
-    el: "#app",
-    store,
-    render: h => h(App)
+  el: '#app',
+  store,
+  router,
+  render: h => h(App)
 });

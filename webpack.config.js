@@ -40,92 +40,91 @@ const config = {
             vue$: 'vue/dist/vue.esm.js',
             '@': path.resolve(__dirname, './src')
         },
-        extensions: ['.js', '.json', '.vue', '.es6'],
+        extensions: ['.js', '.vue', '.es6'],
         modules: [path.resolve(__dirname, 'node_modules')],
         mainFields: ['browser', 'module', 'main']
     },
     module: {
         rules: [{
-            test: /\.m?js$/,
-            exclude: /(node_modules|bower_components)/,
-            include: path.resolve(__dirname, 'src'),
-            use: [{
-                loader: 'thread-loader',
-                options: {
-                    workers: 4
-                }
-            },
-            {
-                loader: 'babel-loader',
-                options: {
-                    cacheDirectory: true
-                }
-            }
-                // 'babel-loader?cacheDirectory=true'
-            ]
-        },
-        {
-            test: /\.vue$/,
-            loader: 'vue-loader'
-        },
-        {
-            test: /\.css$/,
-            use: [
-                isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
-                'css-loader',
-                'postcss-loader'
-            ]
-        },
-        {
-            test: /\.less$/,
-            use: [
-                isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
-                'css-loader',
-                'less-loader',
-                'postcss-loader'
-            ]
-        },
-        {
-            test: /\.(png|svg|jpg|gif)$/,
-            use: [{
-                loader: 'file-loader',
-                options: {
-                    outputPath: './images'
-                }
-            },
-            {
-                loader: 'image-webpack-loader',
-                options: {
-                    mozjpeg: {
-                        progressive: true,
-                        quality: 65
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                include: path.resolve(__dirname, 'src'),
+                use: [{
+                        loader: 'thread-loader',
+                        options: {
+                            workers: 4
+                        }
                     },
-                    optipng: {
-                        enabled: false
-                    },
-                    pngquant: {
-                        quality: [0.65, 0.90],
-                        speed: 4
-                    },
-                    gifsicle: {
-                        interlaced: false
-                    },
-                    webp: {
-                        quality: 75
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            cacheDirectory: true
+                        }
                     }
-                }
+                ]
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+                    'css-loader',
+                    'postcss-loader'
+                ]
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+                    'css-loader',
+                    'less-loader',
+                    'postcss-loader'
+                ]
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [{
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: './images'
+                        }
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            mozjpeg: {
+                                progressive: true,
+                                quality: 65
+                            },
+                            optipng: {
+                                enabled: false
+                            },
+                            pngquant: {
+                                quality: [0.65, 0.90],
+                                speed: 4
+                            },
+                            gifsicle: {
+                                interlaced: false
+                            },
+                            webp: {
+                                quality: 75
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        outputPath: './font'
+                    }
+                }]
             }
-            ]
-        },
-        {
-            test: /\.(woff|woff2|eot|ttf|otf)$/,
-            use: [{
-                loader: 'file-loader',
-                options: {
-                    outputPath: './font'
-                }
-            }]
-        }
         ]
     },
     optimization: {
@@ -227,17 +226,23 @@ if (!isProd) {
         aggregateTimeout: 300,
         poll: 300
     };
+    // config.module.rules.unshift({
+    //     test: /.(vue|js|jsx)$/,
+    //     use: [{
+    //         loader: 'eslint-loader',
+    //         options: {
+    //             formatter: require('eslint-friendly-formatter')
+    //         }
+    //     }],
+    //     enforce: 'pre',
+    //     exclude: /node_modules/,
+    //     include: [path.resolve(__dirname, 'src')]
+    // });
     config.module.rules.unshift({
-        test: /.(vue|js|jsx)$/,
-        use: [{
-            loader: 'eslint-loader',
-            options: {
-                formatter: require('eslint-friendly-formatter')
-            }
-        }],
         enforce: 'pre',
+        test: /\.(js|vue|es6)$/,
         exclude: /node_modules/,
-        include: [path.resolve(__dirname, 'src')]
+        use: 'eslint-loader'
     });
 } else {
     config.plugins.push(new CleanWebpackPlugin(['dist']));
