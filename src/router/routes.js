@@ -5,19 +5,18 @@ export default [{
   path: '/',
   component: App,
   name: 'app',
-  redirect: '/home',
+  redirect: '/user',
   children: [{
-    path: '/home',
     name: 'home',
+    path: '/home',
     component: Home,
-    redirect: '/home/index',
     children: [{
-      path: '/home/index',
+      path: '/index',
       name: 'index',
       component: () => import(/* webpackChunkName: index */ '../views/pages/index/index.vue')
     },
     {
-      path: '/home/user',
+      path: '/user',
       name: 'user',
       component: () => import(/* webpackChunkName: user */ '../views/pages/user/user.vue')
     }
